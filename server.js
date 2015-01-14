@@ -5,17 +5,17 @@ var morgan = require('morgan');
 var bodyParser = require('body-parser');
 var methodOverride = require('method-override');
 
-mongoose.connect('mongodb://node:node@mongo.onmodulus.net:27017/uw03mypu');
+mongoose.connect('mongodb://node:node@mongo.onmodulus.net:27017/uwO3mypu');
 app.use(express.static(__dirname + '/public'));
 app.use(morgan('dev'));
 app.use(bodyParser.urlencoded({'extended':'true'}));
 app.use(bodyParser.json());
 app.use(bodyParser.json({ type: 'application/vnd.api+json' }));
-app.use(methodOverride());
+app.use(methodOverride('X-HTTP-Method-Override'));
 
 var Todo = mongoose.model('Todo', {
   text: String
-})
+});
 
 app.get('/api/todos', function(req, res) {
   Todo.find(function(err, todos) {
@@ -61,6 +61,10 @@ app.delete('/api/todos/:todo_id', function(req, res) {
       });
     }
   );
+});
+
+app.get('*', function(req, res) {
+  res.sendFile('./public/index.html');
 });
 
 app.listen(8080);
